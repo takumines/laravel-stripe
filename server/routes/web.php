@@ -19,6 +19,15 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
 
-Auth::routes();
+Route::prefix('user')->middleware(['auth'])->group(function() {
+    Route::get('subscription', 'User\SubscriptionController@index');
+    Route::get('ajax/subscription/status', 'User\Ajax\SubscriptionController@status');
+    Route::post('ajax/subscription/subscribe', 'User\Ajax\SubscriptionController@subscribe');
+    Route::post('ajax/subscription/cancel', 'User\Ajax\SubscriptionController@cancel');
+    Route::post('ajax/subscription/resume', 'User\Ajax\SubscriptionController@resume');
+    Route::post('ajax/subscription/change_plan', 'User\Ajax\SubscriptionController@change_plan');
+    Route::post('ajax/subscription/update_card', 'User\Ajax\SubscriptionController@update_card');
 
-Route::get('/home', 'HomeController@index')->name('home');
+    Route::get('/card', 'User\StripeController@index')->name('card');
+    Route::post('/create/subscription', 'User\StripeController@createSubscription')->name('create');
+});

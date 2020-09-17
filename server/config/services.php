@@ -30,4 +30,13 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'stripe' => [
+        'model'  => App\User::class,
+        'key' => env('STRIPE_KEY'),
+        'secret' => env('STRIPE_SECRET'),
+        'plans' => [
+            env('STRIPE_BASIC_ID') => 'ベーシック',
+            env('STRIPE_PREMIUM_ID') => 'プレミアム'
+        ]
+    ],
 ];
