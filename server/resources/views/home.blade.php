@@ -19,5 +19,10 @@
             </div>
         </div>
     </div>
+    <div class="row justify-content-center">
+        <div class="col-md-4">
+            <a class="btn btn-lg btn-success" href="{{ route('card') }}">購入画面</a>
+        </div>
+    </div>
 </div>
 @endsection
