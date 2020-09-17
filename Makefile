@@ -54,6 +54,13 @@ create-project:
 	docker-compose exec php composer require --dev squizlabs/php_codesniffer
 
 #-----------------------------------------------------------
+# Install
+#-----------------------------------------------------------
+
+cashier:
+	docker-compose exec php composer require laravel/cashier
+
+#-----------------------------------------------------------
 # PHP Code Sniffer
 #-----------------------------------------------------------
 
