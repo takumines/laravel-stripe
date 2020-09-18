@@ -18,6 +18,7 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
+Route::post('stripe/webhook', 'User\StripeWebhookController@index');
 
 Route::prefix('user')->middleware(['auth'])->group(function() {
     Route::get('subscription', 'User\SubscriptionController@index');
