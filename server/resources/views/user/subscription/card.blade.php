@@ -38,16 +38,16 @@
 <form action="{{ route("create") }}" method="post" id="payment-form">
     @csrf
     <div class="form-row">
-        <label for="plan">
-            プラン
-        </label>
-{{--        <div id="plan-element">--}}
-{{--            <select name="plan" >--}}
-{{--                @foreach(config('services.stripe.plans') as $key)--}}
-{{--                    <option value="{{ $key }}">{{ $value }}</option>--}}
-{{--                @endforeach--}}
-{{--            </select>--}}
-{{--        </div>--}}
+        <div>
+            <label for="plan">
+                プラン
+                <select name="plan" id="plan-element">
+                    @foreach( config('services.stripe.plans') as $key => $value )
+                        <option value="{{ $key }}">{{ $value }}</option>
+                    @endforeach
+                </select>
+            </label>
+        </div>
         <label for="card-element">
             カード決済フォーム
         </label>
@@ -120,9 +120,12 @@
                 var errorElement = document.getElementById('card-errors');
                 errorElement.textContent = result.error.message;
             } else {
-
+                var plan = document.getElementById('plan-element')
+                var hiddenInput = document.createElement('input');
+                hiddenInput.setAttribute('type', 'hidden');
+                hiddenInput.setAttribute('name', 'payment_method');
+                hiddenInput.setAttribute('value', plan.value);
                 // Send the token to your server.
-                // planHandler(result.plan);
                 paymentMethodHandler(result.paymentMethod);
             }
         });
@@ -142,9 +145,6 @@
         form.submit();
     }
 
-    // function planHandler(plan) {
-    //     var form = document.getElementById('plan-element');
-    //     }
 </script>
 
 </body>

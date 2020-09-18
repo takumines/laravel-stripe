@@ -30,5 +30,6 @@ Route::prefix('user')->middleware(['auth'])->group(function() {
     Route::post('ajax/subscription/update_card', 'User\Ajax\SubscriptionController@update_card');
 
     Route::get('/card', 'User\StripeController@index')->name('card');
-    Route::post('/create/subscription', 'User\StripeController@createSubscription')->name('create');
+    Route::post('/subscription/create', 'User\StripeController@subscribe')->name('create');
+    Route::get('/subscription/cancel', 'User\StripeController@cancel')->name('cancel');
 });

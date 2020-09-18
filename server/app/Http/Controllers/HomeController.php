@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -23,6 +25,14 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $user = auth()->user();
+        $result = $user->status();
+        $status = $result['status'];
+        $details = $result['details'];
+
+        return view('home', [
+            'status' => $status,
+            'details' => $details
+        ]);
     }
 }
