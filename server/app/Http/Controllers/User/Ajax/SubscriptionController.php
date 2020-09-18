@@ -93,7 +93,7 @@ class SubscriptionController extends Controller
      *
      * @return array
      */
-    private function status()
+    public function status()
     {
         $status = 'unsubscribed';
         $user = auth()->user();
@@ -120,5 +120,4 @@ class SubscriptionController extends Controller
             'details' => $details
         ];
     }
-
 }
