@@ -7,11 +7,34 @@ use Illuminate\Http\Request;
 
 class StripeController extends Controller
 {
+    /**
+     * サブスク登録画面
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function index()
     {
-        return view('user.subscription.card');
+        $user = auth()->user();
+
+        return view('user.subscription.card', ['intent' => $user->createSetupIntent()]);
     }
 
+    /**
+     * 単発決済画面
+     *
+     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function chargeView()
+    {
+        return view('user.subscription.charge');
+    }
+
+    /**
+     * サブスク登録処理
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function subscribe(Request $request)
     {
         $user = auth()->user();
@@ -23,6 +46,11 @@ class StripeController extends Controller
         return redirect()->route('home');
     }
 
+    /**
+     * サブスクキャンセル
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function cancel()
     {
         $user = auth()->user();
@@ -31,5 +59,19 @@ class StripeController extends Controller
         return redirect()->route('home');
     }
 
+    /**
+     * 単発決済処理
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function charge(Request $request)
+    {
+        $user = auth()->user();
+        $user->charge($request->amount, $request->payment_method, [
+            'currency' => 'jpy',
+        ]);
 
+        return redirect()->route('home');
+    }
 }
