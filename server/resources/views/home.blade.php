@@ -20,8 +20,11 @@
         </div>
     </div>
     <div class="mt-3 row justify-content-center">
-        <div class="col text-center">
+        <div class="col-6 text-center">
             <a class="btn btn-lg btn-success" href="{{ route('card') }}">購入画面</a>
+        </div>
+        <div class="col-6 text-center">
+            <a class="btn btn-lg btn-info" href="{{ route('chargeView') }}">単発決済画面</a>
         </div>
     </div>
     <div class="mt-5 row justify-content-center">
