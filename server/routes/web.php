@@ -32,4 +32,6 @@ Route::prefix('user')->middleware(['auth'])->group(function() {
     Route::get('/card', 'User\StripeController@index')->name('card');
     Route::post('/subscription/create', 'User\StripeController@subscribe')->name('create');
     Route::get('/subscription/cancel', 'User\StripeController@cancel')->name('cancel');
+    Route::get('/charge', 'User\StripeController@chargeView')->name('chargeView');
+    Route::post('/subscription/charge', 'User\StripeCOntroller@charge')->name('charge');
 });
