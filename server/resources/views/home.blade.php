@@ -21,7 +21,7 @@
     </div>
     <div class="mt-3 row justify-content-center">
         <div class="col-6 text-center">
-            <a class="btn btn-lg btn-success" href="{{ route('card') }}">購入画面</a>
+            <a class="btn btn-lg btn-success" href="{{ route('stripe') }}">購入画面</a>
         </div>
         <div class="col-6 text-center">
             <a class="btn btn-lg btn-info" href="{{ route('chargeView') }}">単発決済画面</a>
@@ -45,6 +45,24 @@
         <div class="col-6 text-center">
             <a class="btn btn-lg btn-danger" href="{{ route('cancel') }}">キャンセル</a>
         </div>
+    </div>
+    <h3 class="text-center">お支払情報</h3>
+    <div class="mt-5 row justify-content-center">
+        <table class="mt-2 table">
+            <tr><th>請求日</th><th>内容</th><th>契約期間</th><th>請求額</th></tr>
+
+            @foreach ($invoices as $invoice)
+                <tr>
+                    <td>{{ $invoice->date()->format('Y年m月d日') }}</td>
+                    <td>{{ $invoice->plan_name }}</td>
+                    <td>{{ $invoice->date()->format('Y年m月d日') . ' ~ ' . $invoice->stopped}}</td>
+                    <td>{{ $invoice->total() }}</td>
+
+                    <td><a href="/user/invoice/{{ $invoice->id }}">請求書</a></td>
+                </tr>
+{{--                {{ dd($invoice) }}--}}
+            @endforeach
+        </table>
     </div>
 </div>
 @endsection
