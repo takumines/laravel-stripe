@@ -2,9 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
+use Carbon\Carbon;
 
 class HomeController extends Controller
 {
@@ -27,12 +25,28 @@ class HomeController extends Controller
     {
         $user = auth()->user();
         $result = $user->status();
+        // subscriptionのstripe_statusがactiveなinvoiceにプラン名と定期支払いの締め日を含めて返す
+        $invoices = $user->invoices()->filter(function($value) use ($user) {
+            $subscription = $user->subscriptions()->where('stripe_id', $value->subscription)->first();
+
+            return $subscription->stripe_status  === 'active';
+        })->each(function ($value) use ($user) {
+            // プラン名を取得
+            $subscription = $user->subscriptions()->where('stripe_id', $value->subscription)->first();
+            $plan = \Arr::get(config('services.stripe.plans'), $subscription->stripe_plan);
+            $value->plan_name = $plan;
+            // サブスク更新日時を取得
+            $stopped = array_shift($value->lines->data)->period->end;
+            $value->stopped = Carbon::createFromTimestamp($stopped, 'Asia/Tokyo')->format('Y年m月d日');
+        });
+
         $status = $result['status'];
         $details = $result['details'];
 
         return view('home', [
             'status' => $status,
-            'details' => $details
+            'details' => $details,
+            'invoices' => $invoices,
         ]);
     }
 }

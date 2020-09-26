@@ -4,10 +4,7 @@ namespace App\Http\Controllers\Stripe;
 
 
 use Illuminate\Support\Facades\Log;
-use Laravel\Cashier\Cashier;
 use Laravel\Cashier\Http\Controllers\WebhookController as CashierController;
-use Illuminate\Http\Request;
-use Laravel\Cashier\Subscription;
 
 class WebhookController extends CashierController
 {
@@ -23,20 +20,12 @@ class WebhookController extends CashierController
     public function handleInvoicePaymentFailed($payload)
     {
         if ($payload['data']['object']['customer']) {
-            $user = $this->getUserByStripeId('cus_I510rP4HqaLM1n');// $payload['data']['object']['customer']
+            $user = $this->getUserByStripeId('cus_I510rP4HqaLM1n'); //TODO webhookのテストでは値が固定されている為固定値を与えている。本来は$payload['data']['object']['customer']
             $user->subscriptions->each(function ($subscription) {
                     if ($subscription->stripe_status === 'active') {
-                        $subscription->cancelNow();
+                        $subscription->cancel();
                     }
             });
-//            if ($payload['data']['object']['lines']['data']) {
-//                Log::info($payload['data']['object']['lines']['data']);
-//                $filtered = $user->subscriptions->filter(function ($subscription) use ($payload) {
-//                    return $subscription->stripe_id === 'sub_I4wsM7yhS89HPm';
-//                })->each(function ($subscription) {
-//
-//                });
-//            };
         }
 
         return $this->successMethod();
