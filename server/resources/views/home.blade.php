@@ -31,10 +31,10 @@
         サブスクリプション状態
         <table class="mt-2 table">
             <tr><th>サブスク状態</th><th>プラン名</th><th>登録カード</th></tr>
-            @if($status === 'subscribed')
-                <tr><td>{{ $status }}</td><td>{{ $details['plan'] }}</td><td>{{ $details['card_last_four'] }}</td></tr>
-            @else
+            @if($status === 'cancelled' || $status === 'unsubscribed')
                 <tr><td>登録なし</td></tr>
+            @else
+                <tr><td>{{ $status }}</td><td>{{ $details['plan'] }}</td><td>{{ $details['card_last_four'] }}</td><td>{{ $details['trial_end_date']}}</td></tr>
             @endif
         </table>
     </div>
@@ -43,7 +43,7 @@
             <a class="btn btn-lg btn-primary" href="#">プラン変更</a>
         </div>
         <div class="col-6 text-center">
-            <a class="btn btn-lg btn-danger" href="{{ route('cancel') }}">キャンセル</a>
+            <a class="btn btn-lg btn-danger" href="{{ route('stripeCancel') }}">キャンセル</a>
         </div>
     </div>
     <h3 class="text-center">お支払情報</h3>
@@ -60,7 +60,6 @@
 
                     <td><a href="/user/invoice/{{ $invoice->id }}">請求書</a></td>
                 </tr>
-{{--                {{ dd($invoice) }}--}}
             @endforeach
         </table>
     </div>
