@@ -35,7 +35,7 @@
 </head>
 <body>
 <script src="https://js.stripe.com/v3/"></script>
-<form action="{{ route("create") }}" method="post" id="payment-form">
+<form action="{{ route("stripeCreate") }}" method="post" id="payment-form">
     @csrf
     <div class="form-row">
         <div>
@@ -61,7 +61,7 @@
         <!-- Used to display form errors. -->
         <div id="card-errors" role="alert"></div>
         <div>
-            <input type="checkbox" id="trial" value="1">7日間の使用期間を利用する
+            <input type="checkbox" name="trial"  value="1">7日間の使用期間を利用する
         </div>
     </div>
 
@@ -121,9 +121,9 @@
     cardButton.addEventListener('click', async (e) => {
         const {setupIntent, error} = await stripe.confirmCardSetup(
             clientSecret, {
-                card: cardElement,
-                billing_details: {
-                    name: cardHolderName
+                payment_method: {
+                    card: cardElement,
+                    billing_details: { name: cardHolderName.value }
                 }
             }
         );
@@ -132,7 +132,8 @@
                 var errorElement = document.getElementById('card-errors');
                 errorElement.textContent = error.message;
             } else {
-                $("#paymentForm").submit();
+                var form = document.getElementById('payment-form');
+                form.submit();
             }
         });
 
