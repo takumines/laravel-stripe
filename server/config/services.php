@@ -40,7 +40,8 @@ return [
         ],
         'plans' => [
             env('STRIPE_BASIC_ID') => 'ベーシック',
-            env('STRIPE_PREMIUM_ID') => 'プレミアム'
+            env('STRIPE_PREMIUM_ID') => 'プレミアム',
+            env('STRIPE_SABUTYAN_ID') => 'サブちゃん',
         ]
     ],
 ];

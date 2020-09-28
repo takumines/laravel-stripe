@@ -35,18 +35,12 @@
 </head>
 <body>
 <script src="https://js.stripe.com/v3/"></script>
-<form action="{{ route("stripeCreate") }}" method="post" id="payment-form">
+<h2>単発決済</h2>
+<form action="{{ route("charge") }}" method="post" id="payment-form">
     @csrf
     <div class="form-row">
         <div>
-            <label for="plan">
-                プラン
-                <select name="plan" id="plan-element">
-                    @foreach( config('services.stripe.plans') as $key => $value )
-                        <option value="{{ $key }}">{{ $value }}</option>
-                    @endforeach
-                </select>
-            </label>
+            <input type="hidden" name="amount" id="amount" value="500">りんご 500円
         </div>
         <label for="card-element">
             カード決済フォーム
@@ -60,14 +54,9 @@
 
         <!-- Used to display form errors. -->
         <div id="card-errors" role="alert"></div>
-        <div>
-            <input type="checkbox" name="trial"  value="1">7日間の使用期間を利用する
-        </div>
     </div>
 
-    <button id="card-button" data-secret="{{ $intent->client_secret }}">
-        Submit Payment
-    </button>
+    <button>Submit Payment</button>
 </form>
 <script type="text/javascript">
     // Create a Stripe client.
@@ -95,15 +84,12 @@
         }
     };
 
-    // Create an instance of the card Element.
     var cardElement = elements.create('card', {
         style: style,
         hidePostalCode: true
     });
 
-    // Add an instance of the card Element into the `card-element` <div>.
     cardElement.mount('#card-element');
-    // Handle real-time validation errors from the card Element.
     cardElement.addEventListener('change', function(event) {
         var displayError = document.getElementById('card-errors');
         if (event.error) {
@@ -113,29 +99,45 @@
         }
     });
 
-    // Handle form submission.
     var form = document.getElementById('payment-form');
     var cardHolderName = document.getElementById('card-holder-name');
-    var cardButton = document.getElementById('card-button');
-    var clientSecret = cardButton.dataset.secret;
-    cardButton.addEventListener('click', async (e) => {
-        const {setupIntent, error} = await stripe.confirmCardSetup(
-            clientSecret, {
-                payment_method: {
-                    card: cardElement,
-                    billing_details: { name: cardHolderName.value }
-                }
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        stripe.createPaymentMethod({
+            type:'card',
+            card: cardElement,
+            billing_details: {
+                name: cardHolderName
             }
-        );
-            if (error) {
-                // Inform the user if there was an error.
+        }).then(function(result) {
+            if (result.error) {
                 var errorElement = document.getElementById('card-errors');
-                errorElement.textContent = error.message;
+                errorElement.textContent = result.error.message;
             } else {
-                var form = document.getElementById('payment-form');
-                form.submit();
+                var amount = document.getElementById('amount');
+                var hiddenInput = document.createElement('input');
+                hiddenInput.setAttribute('type', 'hidden');
+                hiddenInput.setAttribute('name', 'amount');
+                hiddenInput.setAttribute('value', amount.value);
+
+                paymentMethodHandler(result.paymentMethod);
             }
         });
+    });
+
+    function paymentMethodHandler(paymentMethod) {
+        // Insert the token ID into the form so it gets submitted to the server
+        var form = document.getElementById('payment-form');
+        var hiddenInput = document.createElement('input');
+        hiddenInput.setAttribute('type', 'hidden');
+        hiddenInput.setAttribute('name', 'payment_method');
+        hiddenInput.setAttribute('value', paymentMethod.id);
+        form.appendChild(hiddenInput);
+
+        // Submit the form
+        form.submit();
+    }
 
 </script>
 

@@ -11,6 +11,8 @@
 |
 */
 
+use Illuminate\Http\Request;
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -18,18 +20,27 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
-Route::post('stripe/webhook', 'User\StripeWebhookController@index');
+Route::post('stripe/webhook', 'Stripe\WebhookController@handleWebhook');
 
 Route::prefix('user')->middleware(['auth'])->group(function() {
-    Route::get('subscription', 'User\SubscriptionController@index');
-    Route::get('ajax/subscription/status', 'User\Ajax\SubscriptionController@status');
-    Route::post('ajax/subscription/subscribe', 'User\Ajax\SubscriptionController@subscribe');
-    Route::post('ajax/subscription/cancel', 'User\Ajax\SubscriptionController@cancel');
-    Route::post('ajax/subscription/resume', 'User\Ajax\SubscriptionController@resume');
-    Route::post('ajax/subscription/change_plan', 'User\Ajax\SubscriptionController@change_plan');
-    Route::post('ajax/subscription/update_card', 'User\Ajax\SubscriptionController@update_card');
+    Route::get('subscription', 'Stripe\SubscriptionController@index')->name('stripe');
+    Route::get('ajax/subscription/status', 'Stripe\Ajax\SubscriptionController@status');
+    Route::post('ajax/subscription/subscribe', 'Stripe\Ajax\SubscriptionController@subscribe')->name('create');
+    Route::post('ajax/subscription/cancel', 'Stripe\Ajax\SubscriptionController@cancel')->name('cancel');
+    Route::post('ajax/subscription/resume', 'Stripe\Ajax\SubscriptionController@resume');
+    Route::post('ajax/subscription/change_plan', 'Stripe\Ajax\SubscriptionController@change_plan');
+    Route::post('ajax/subscription/update_card', 'Stripe\Ajax\SubscriptionController@update_card');
+    Route::get('/invoice/{invoice}', function (Request $request, $invoiceId) {
+        return $request->user()->downloadInvoice($invoiceId, [
+            'vendor' => 'Your Company',
+            'product' => 'Your Product',
+        ]);
+    });
 
-    Route::get('/card', 'User\StripeController@index')->name('card');
-    Route::post('/subscription/create', 'User\StripeController@subscribe')->name('create');
-    Route::get('/subscription/cancel', 'User\StripeController@cancel')->name('cancel');
+    Route::get('/card', 'Stripe\StripeController@index')->name('card');
+    Route::post('/subscription/create', 'Stripe\StripeController@subscribe')->name('stripeCreate');
+    Route::get('/subscription/cancel', 'Stripe\StripeController@cancel')->name('stripeCancel');
+    Route::get('/charge', 'Stripe\StripeController@chargeView')->name('chargeView');
+    Route::post('/subscription/charge', 'Stripe\StripeController@charge')->name('charge');
+
 });

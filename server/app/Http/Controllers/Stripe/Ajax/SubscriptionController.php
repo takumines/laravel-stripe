@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\User\Ajax;
+namespace App\Http\Controllers\Stripe\Ajax;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
