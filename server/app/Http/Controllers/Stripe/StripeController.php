@@ -40,7 +40,11 @@ class StripeController extends Controller
         $user = auth()->user();
         if (!$user->subscribed('main')) {
             $paymentMethod = $request->payment_method;
-            $user->newSubscription('main', $request->plan)->create($paymentMethod);
+            if ($request->trial) { // 試用期間アリの場合
+                $user->newSubscription('main', $request->plan)->trialDays(1)->create($paymentMethod);
+            } else {
+                $user->newSubscription('main', $request->plan)->create($paymentMethod);
+            }
         }
 
         return redirect()->route('home');
