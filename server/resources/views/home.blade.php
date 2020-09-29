@@ -34,7 +34,11 @@
             @if($status === 'cancelled' || $status === 'unsubscribed')
                 <tr><td>登録なし</td></tr>
             @else
-                <tr><td>{{ $status }}</td><td>{{ $details['plan'] }}</td><td>{{ $details['card_last_four'] }}</td><td>{{ $details['trial_end_date']}}</td></tr>
+                @if($status === 'trial')
+                    <tr><td>{{ $status }}</td><td>{{ $details['plan'] }}</td><td>{{ $details['card_last_four'] }}</td><td>{{ $details['trial_end_date']}}</td></tr>
+                @else
+                    <tr><td>{{ $status }}</td><td>{{ $details['plan'] }}</td><td>{{ $details['card_last_four'] }}</td></tr>
+                @endif
             @endif
         </table>
     </div>
@@ -58,7 +62,7 @@
                     <td>{{ $invoice->date()->format('Y年m月d日') . ' ~ ' . $invoice->stopped}}</td>
                     <td>{{ $invoice->total() }}</td>
 
-                    <td><a href="/user/invoice/{{ $invoice->id }}">請求書</a></td>
+                    <td><a href="{{ $invoice->hosted_invoice_url }}">請求書</a></td>
                 </tr>
             @endforeach
         </table>
