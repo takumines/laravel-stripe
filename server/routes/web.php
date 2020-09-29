@@ -30,12 +30,6 @@ Route::prefix('user')->middleware(['auth'])->group(function() {
     Route::post('ajax/subscription/resume', 'Stripe\Ajax\SubscriptionController@resume');
     Route::post('ajax/subscription/change_plan', 'Stripe\Ajax\SubscriptionController@change_plan');
     Route::post('ajax/subscription/update_card', 'Stripe\Ajax\SubscriptionController@update_card');
-    Route::get('/invoice/{invoice}', function (Request $request, $invoiceId) {
-        return $request->user()->downloadInvoice($invoiceId, [
-            'vendor' => 'Your Company',
-            'product' => 'Your Product',
-        ]);
-    });
 
     Route::get('/card', 'Stripe\StripeController@index')->name('card');
     Route::post('/subscription/create', 'Stripe\StripeController@subscribe')->name('stripeCreate');
