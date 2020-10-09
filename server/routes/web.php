@@ -17,12 +17,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+Auth::routes(['verify' => true]);
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::post('stripe/webhook', 'Stripe\WebhookController@handleWebhook');
 
-Route::prefix('user')->middleware(['auth'])->group(function() {
+Route::prefix('user')->middleware(['auth', 'verified'])->group(function() {
     Route::get('subscription', 'Stripe\SubscriptionController@index')->name('stripe');
     Route::get('ajax/subscription/status', 'Stripe\Ajax\SubscriptionController@status');
     Route::post('ajax/subscription/subscribe', 'Stripe\Ajax\SubscriptionController@subscribe')->name('create');
